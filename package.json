@@ -6,7 +6,7 @@
   "keywords": [
     "tools"
   ],
-  "repository": "https://github.com/iLay1678/i-tools.git",
+  "repository": "https://github.com/abc1319/i-tools.git",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
