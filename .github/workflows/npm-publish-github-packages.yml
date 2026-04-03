@@ -1,52 +1,31 @@
 name: 自动构建并部署到GitHub Pages
 
-# 触发条件：推送到main分支，或者手动触发
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
-# 给工作流分配Pages部署权限
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# 只允许一个部署任务同时运行
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: 拉取代码
         uses: actions/checkout@v4
 
-      - name: 配置Node.js环境
+      - name: 配置Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20 # 适配项目的Node版本
-          cache: 'npm' # 缓存依赖，加速下次构建
+          node-version: 20
+          cache: 'npm'
 
-      - name: 安装依赖（对应npm install）
+      - name: 安装依赖
         run: npm install
 
-      - name: 构建项目（对应npm run build）
+      - name: 构建项目
         run: npm run build
 
-      - name: 配置GitHub Pages
-        uses: actions/configure-pages@v5
-
-      - name: 上传构建产物
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dist' # 对应构建生成的dist文件夹
-
       - name: 部署到GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
